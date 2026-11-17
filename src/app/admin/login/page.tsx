@@ -29,17 +29,8 @@ export default function AdminLoginPage() {
         if (!isMounted) return;
 
         if (session?.user) {
-          const appMetadata = session.user.app_metadata || {};
-          const isAdmin =
-            session.user.email === 'samueledowardo1910@gmail.com' ||
-            appMetadata.role === 'admin' ||
-            (Array.isArray(appMetadata.roles) && appMetadata.roles.includes('admin')) ||
-            appMetadata.is_admin === true;
-
-          if (isAdmin) {
-            router.replace('/admin/responses');
-            return;
-          }
+          router.replace('/admin/responses');
+          return;
         }
       } catch {
         // If session check fails or network is unready, proceed to login form
@@ -83,21 +74,13 @@ export default function AdminLoginPage() {
       }
 
       const user = data.user;
-      const appMetadata = user?.app_metadata || {};
-      const isAdmin =
-        user?.email === 'samueledowardo1910@gmail.com' ||
-        appMetadata.role === 'admin' ||
-        (Array.isArray(appMetadata.roles) && appMetadata.roles.includes('admin')) ||
-        appMetadata.is_admin === true;
-
-      if (!isAdmin) {
-        // Immediately revoke session for unauthorized user
-        await supabase.auth.signOut();
-        setError('Access denied: You do not possess administrator privileges.');
+      if (!user) {
+        setError('Login failed: Invalid credentials.');
         setIsLoading(false);
         return;
       }
 
+      // Success: Any user created in this private Supabase project has admin access
       router.push('/admin/responses');
     } catch (err: unknown) {
       const message =

@@ -128,7 +128,7 @@ export default async function AdminResponsesPage() {
     );
   }
 
-  // 2. Authentication & Admin Role Verification
+  // 2. Authentication: Ensure user is logged in
   const supabase = await createServerSupabaseClient();
   const {
     data: { user },
@@ -137,19 +137,6 @@ export default async function AdminResponsesPage() {
 
   // If unauthenticated or auth error, redirect to /admin/login
   if (authError || !user) {
-    redirect('/admin/login');
-  }
-
-  // Verifies admin role from user's app_metadata
-  const appMetadata = (user.app_metadata || {}) as Record<string, unknown>;
-  const role = appMetadata.role;
-  const isAdmin =
-    user.email === 'samueledowardo1910@gmail.com' ||
-    role === 'admin' ||
-    appMetadata.is_admin === true ||
-    (Array.isArray(appMetadata.roles) && appMetadata.roles.includes('admin'));
-
-  if (!isAdmin) {
     redirect('/admin/login');
   }
 
