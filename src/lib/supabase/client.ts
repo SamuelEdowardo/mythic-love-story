@@ -1,4 +1,5 @@
-import { createClient, SupabaseClient } from '@supabase/supabase-js';
+import { createBrowserClient } from '@supabase/ssr';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 function getValidConfig(): { url: string; key: string } {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -29,5 +30,4 @@ function getValidConfig(): { url: string; key: string } {
 
 const config = getValidConfig();
 
-export const supabase: SupabaseClient = createClient(config.url, config.key);
-
+export const supabase: SupabaseClient = createBrowserClient(config.url, config.key);

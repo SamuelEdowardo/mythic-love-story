@@ -81,7 +81,7 @@ export default function AdminLoginPage() {
       }
 
       // Success: Any user created in this private Supabase project has admin access
-      router.push('/admin/responses');
+      window.location.href = '/admin/responses';
     } catch (err: unknown) {
       const message =
         err instanceof Error
