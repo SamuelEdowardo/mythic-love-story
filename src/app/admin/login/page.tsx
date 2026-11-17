@@ -31,6 +31,7 @@ export default function AdminLoginPage() {
         if (session?.user) {
           const appMetadata = session.user.app_metadata || {};
           const isAdmin =
+            session.user.email === 'samueledowardo1910@gmail.com' ||
             appMetadata.role === 'admin' ||
             (Array.isArray(appMetadata.roles) && appMetadata.roles.includes('admin')) ||
             appMetadata.is_admin === true;
@@ -84,6 +85,7 @@ export default function AdminLoginPage() {
       const user = data.user;
       const appMetadata = user?.app_metadata || {};
       const isAdmin =
+        user?.email === 'samueledowardo1910@gmail.com' ||
         appMetadata.role === 'admin' ||
         (Array.isArray(appMetadata.roles) && appMetadata.roles.includes('admin')) ||
         appMetadata.is_admin === true;

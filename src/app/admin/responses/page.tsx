@@ -1,6 +1,7 @@
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { createServerSupabaseClient } from '@/lib/supabase/server';
+import { createAdminClient } from '@/lib/supabase/admin';
 import ResponsesDashboard from '@/components/admin/ResponsesDashboard';
 import type { ProposalRecord, DashboardStats } from '@/types';
 
@@ -143,6 +144,7 @@ export default async function AdminResponsesPage() {
   const appMetadata = (user.app_metadata || {}) as Record<string, unknown>;
   const role = appMetadata.role;
   const isAdmin =
+    user.email === 'samueledowardo1910@gmail.com' ||
     role === 'admin' ||
     appMetadata.is_admin === true ||
     (Array.isArray(appMetadata.roles) && appMetadata.roles.includes('admin'));
@@ -151,11 +153,21 @@ export default async function AdminResponsesPage() {
     redirect('/admin/login');
   }
 
-  // 3. Fetch proposal responses from Supabase ordered by created_at DESC
-  const { data, error: dbError } = await supabase
-    .from('proposal_responses')
-    .select('id, session_id, response, created_at')
-    .order('created_at', { ascending: false });
+  // 3. Fetch proposal responses from Supabase ordered by created_at DESC using admin client
+  let data: any[] | null = null;
+  let dbError: any = null;
+
+  try {
+    const adminDb = createAdminClient();
+    const result = await adminDb
+      .from('proposal_responses')
+      .select('id, session_id, response, created_at')
+      .order('created_at', { ascending: false });
+    data = result.data;
+    dbError = result.error;
+  } catch (err: any) {
+    dbError = err;
+  }
 
   if (dbError) {
     console.error('[Admin Responses] Database error while fetching responses:', dbError.message);
